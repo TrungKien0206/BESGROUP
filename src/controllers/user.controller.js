@@ -24,7 +24,7 @@ const GetById = async (req, res) => {
   }
 };
 
-// ➕ API THÊM USER
+//  API THÊM USER
 const CreateUser = async (req, res) => {
   try {
     const userData = req.body;
@@ -40,7 +40,7 @@ const CreateUser = async (req, res) => {
   }
 };
 
-// ✏️ API CẬP NHẬT USER
+//  API CẬP NHẬT USER
 const UpdateUser = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -56,7 +56,7 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-// 🗑️ API XÓA USER
+//  API XÓA USER
 const DeleteUser = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
