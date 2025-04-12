@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import routes from "./src/routes/index.js"; // Đảm bảo rằng đường dẫn này chính xác
+import routes from "./src/routes/index.js"; 
 
 const app = express();
 dotenv.config();
@@ -17,7 +17,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
 
 // Cấu hình static serving
-app.use("/public", express.static(path.join(__dirname, "src", "public"))); // Dòng này phục vụ file tĩnh từ thư mục src/public
+app.use("/public", express.static(path.join(__dirname, "src", "public"))); 
 
 // Middleware để xử lý JSON
 app.use(express.json());
@@ -32,15 +32,14 @@ app.get("/", (req, res) => {
       return res.status(500).send("Error reading database.");
     }
 
-    // Lấy dữ liệu từ db.json, chú ý đến tên 'User' trong file JSON
+    // Lấy dữ liệu từ db.json
     const users = JSON.parse(data).User || [];
 
-    // Đảm bảo mỗi user có đầy đủ trường để hiển thị
     const formattedUsers = users.map((user) => ({
       id: user.id || "",
       name: user.name || "",
       email: user.email || "",
-      role: user.role || "user", // Mặc định là 'user' nếu không có role
+      role: user.role || "user", 
     }));
 
     // Render dữ liệu ra view home.ejs
