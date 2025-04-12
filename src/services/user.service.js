@@ -25,7 +25,7 @@ const GetById = async (id) => {
   }
 };
 
-// ➕ THÊM USER
+// THÊM USER
 const CreateUser = async (userData) => {
   try {
     const db = await DbHelper.readDb();
@@ -38,7 +38,7 @@ const CreateUser = async (userData) => {
   }
 };
 
-// ✏️ CẬP NHẬT USER
+//  CẬP NHẬT USER
 const UpdateUser = async (id, userData) => {
   try {
     const db = await DbHelper.readDb();
@@ -54,7 +54,7 @@ const UpdateUser = async (id, userData) => {
   }
 };
 
-// 🗑️ XÓA USER
+// XÓA USER
 const DeleteUser = async (id) => {
   try {
     const db = await DbHelper.readDb();
