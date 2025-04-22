@@ -1,7 +1,6 @@
 import mongodb from "../database/mongodb.js";
 import { ObjectId } from "mongodb";
 
-// Lấy tất cả người dùng
 const GetAll = async () => {
   try {
     const db = await mongodb.getDB();
@@ -12,7 +11,6 @@ const GetAll = async () => {
   }
 };
 
-// Lấy người dùng theo ID
 const GetById = async (id) => {
   try {
     const db = await mongodb.getDB();
@@ -26,7 +24,6 @@ const GetById = async (id) => {
   }
 };
 
-// Tìm người dùng theo tuổi
 const GetByAge = async (age) => {
   try {
     const db = await mongodb.getDB();
@@ -42,7 +39,6 @@ const GetByAge = async (age) => {
   }
 };
 
-// Tìm người dùng theo năm sinh
 const GetByYearOfBirth = async (yearOfBirth) => {
   try {
     const db = await mongodb.getDB();
@@ -64,7 +60,6 @@ const GetByYearOfBirth = async (yearOfBirth) => {
   }
 };
 
-// Cập nhật toàn bộ thông tin người dùng theo ID
 const updateUserByID = async (id, userData) => {
   try {
     const db = await mongodb.getDB();
@@ -78,7 +73,6 @@ const updateUserByID = async (id, userData) => {
   }
 };
 
-// Cập nhật 1 field cụ thể của user theo ID
 const updateUserByField = async (id, fieldName, fieldValue) => {
   try {
     const db = await mongodb.getDB();
@@ -95,7 +89,6 @@ const updateUserByField = async (id, fieldName, fieldValue) => {
   }
 };
 
-// Xóa người dùng theo ID
 const deleteUserByID = async (id) => {
   try {
     const db = await mongodb.getDB();
@@ -109,7 +102,6 @@ const deleteUserByID = async (id) => {
   }
 };
 
-// Tạo user mới
 const CreateUser = async (userData) => {
   try {
     const db = await mongodb.getDB();
@@ -127,6 +119,6 @@ export default {
   updateUserByID,
   updateUserByField,
   deleteUserByID,
-  GetByAge, // Thêm phương thức GetByAge
-  GetByYearOfBirth, // Thêm phương thức GetByYearOfBirth
+  GetByAge,
+  GetByYearOfBirth, 
 };
