@@ -1,79 +1,132 @@
-import DbHelper from "../helpers/DbHelper.js";
+import mongodb from "../database/mongodb.js";
+import { ObjectId } from "mongodb";
 
+// Lấy tất cả người dùng
 const GetAll = async () => {
   try {
-    const db = await DbHelper.readDb();
-    return db.User;
+    const db = await mongodb.getDB();
+    const users = await db.collection("users").find().toArray();
+    return users;
   } catch (error) {
-    throw new Error("Lỗi khi đọc database");
+    throw new Error("Lỗi khi lấy danh sách user: " + error.message);
   }
 };
 
+// Lấy người dùng theo ID
 const GetById = async (id) => {
-  if (isNaN(id)) {
-    throw new Error("ID không hợp lệ");
-  }
   try {
-    const db = await DbHelper.readDb();
-    const user = db.User.find((user) => user.id === id);
-    if (!user) {
-      throw new Error("User không tồn tại");
-    }
+    const db = await mongodb.getDB();
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+    if (!user) throw new Error("User không tồn tại");
     return user;
   } catch (error) {
-    throw new Error("Lỗi khi truy xuất user: " + error.message);
+    throw new Error("Lỗi khi lấy user theo ID: " + error.message);
   }
 };
 
-// THÊM USER
-const CreateUser = async (userData) => {
+// Tìm người dùng theo tuổi
+const GetByAge = async (age) => {
   try {
-    const db = await DbHelper.readDb();
-    const newUser = { id: db.User.length + 1, ...userData };
-    db.User.push(newUser);
-    await DbHelper.writeDb(db);
-    return newUser;
+    const db = await mongodb.getDB();
+    const users = await db
+      .collection("users")
+      .find({ age: parseInt(age) })
+      .toArray();
+    if (!users || users.length === 0)
+      throw new Error("Không tìm thấy user với tuổi này");
+    return users;
   } catch (error) {
-    throw new Error("Lỗi khi tạo user: " + error.message);
+    throw new Error("Lỗi khi tìm kiếm user theo tuổi: " + error.message);
   }
 };
 
-//  CẬP NHẬT USER
-const UpdateUser = async (id, userData) => {
+// Tìm người dùng theo năm sinh
+const GetByYearOfBirth = async (yearOfBirth) => {
   try {
-    const db = await DbHelper.readDb();
-    const index = db.User.findIndex((user) => user.id === id);
-    if (index === -1) {
-      throw new Error("User không tồn tại");
-    }
-    db.User[index] = { ...db.User[index], ...userData };
-    await DbHelper.writeDb(db);
-    return db.User[index];
+    const db = await mongodb.getDB();
+    // Giả sử `joinedAt` là trường ngày tháng nhập học, ta tính năm sinh từ `joinedAt`
+    const users = await db
+      .collection("users")
+      .find({
+        joinedAt: {
+          $gte: new Date(`${yearOfBirth}-01-01`),
+          $lt: new Date(`${parseInt(yearOfBirth) + 1}-01-01`),
+        },
+      })
+      .toArray();
+    if (!users || users.length === 0)
+      throw new Error("Không tìm thấy user với năm sinh này");
+    return users;
   } catch (error) {
-    throw new Error("Lỗi khi cập nhật user: " + error.message);
+    throw new Error("Lỗi khi tìm kiếm user theo năm sinh: " + error.message);
   }
 };
 
-// XÓA USER
-const DeleteUser = async (id) => {
+// Cập nhật toàn bộ thông tin người dùng theo ID
+const updateUserByID = async (id, userData) => {
   try {
-    const db = await DbHelper.readDb();
-    const index = db.User.findIndex((user) => user.id === id);
-    if (index === -1) {
-      throw new Error("User không tồn tại");
-    }
-    const deletedUser = db.User.splice(index, 1);
-    await DbHelper.writeDb(db);
-    return deletedUser[0];
+    const db = await mongodb.getDB();
+    const result = await db
+      .collection("users")
+      .updateOne({ _id: new ObjectId(id) }, { $set: userData });
+    if (result.matchedCount === 0) throw new Error("User không tồn tại");
+    return await GetById(id);
+  } catch (error) {
+    throw new Error("Lỗi khi cập nhật toàn bộ user: " + error.message);
+  }
+};
+
+// Cập nhật 1 field cụ thể của user theo ID
+const updateUserByField = async (id, fieldName, fieldValue) => {
+  try {
+    const db = await mongodb.getDB();
+    const result = await db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { [fieldName]: fieldValue } }
+      );
+    if (result.matchedCount === 0) throw new Error("User không tồn tại");
+    return await GetById(id);
+  } catch (error) {
+    throw new Error("Lỗi khi cập nhật field user: " + error.message);
+  }
+};
+
+// Xóa người dùng theo ID
+const deleteUserByID = async (id) => {
+  try {
+    const db = await mongodb.getDB();
+    const result = await db
+      .collection("users")
+      .deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) throw new Error("User không tồn tại");
+    return { _id: id, deleted: true };
   } catch (error) {
     throw new Error("Lỗi khi xóa user: " + error.message);
   }
 };
 
+// Tạo user mới
+const CreateUser = async (userData) => {
+  try {
+    const db = await mongodb.getDB();
+    const result = await db.collection("users").insertOne(userData);
+    return await GetById(result.insertedId);
+  } catch (error) {
+    throw new Error("Lỗi khi tạo user: " + error.message);
+  }
+};
+
 export default {
+  CreateUser,
   GetAll,
   GetById,
-  CreateUser,
-  UpdateUser,
-  DeleteUser,
+  updateUserByID,
+  updateUserByField,
+  deleteUserByID,
+  GetByAge, // Thêm phương thức GetByAge
+  GetByYearOfBirth, // Thêm phương thức GetByYearOfBirth
 };
