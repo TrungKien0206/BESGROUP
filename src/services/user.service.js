@@ -42,7 +42,6 @@ const GetByAge = async (age) => {
 const GetByYearOfBirth = async (yearOfBirth) => {
   try {
     const db = await mongodb.getDB();
-    // Giả sử `joinedAt` là trường ngày tháng nhập học, ta tính năm sinh từ `joinedAt`
     const users = await db
       .collection("users")
       .find({
