@@ -1,6 +1,5 @@
 import userService from "../services/user.service.js";
 
-// Lấy tất cả người dùng
 const GetAll = async (req, res) => {
   try {
     const users = await userService.GetAll();
@@ -11,7 +10,6 @@ const GetAll = async (req, res) => {
   }
 };
 
-// Lấy người dùng theo ID
 const GetById = async (req, res) => {
   try {
     const user = await userService.GetById(req.params.id);
@@ -27,7 +25,6 @@ const GetById = async (req, res) => {
   }
 };
 
-// Tạo người dùng mới
 const CreateUser = async (req, res) => {
   try {
     const userData = req.body;
@@ -45,7 +42,6 @@ const CreateUser = async (req, res) => {
   }
 };
 
-// Cập nhật người dùng
 const UpdateUser = async (req, res) => {
   try {
     const updatedUser = await userService.updateUserByID(
@@ -65,7 +61,6 @@ const UpdateUser = async (req, res) => {
   }
 };
 
-// Xóa người dùng
 const DeleteUser = async (req, res) => {
   try {
     const result = await userService.deleteUserByID(req.params.id);
@@ -81,7 +76,6 @@ const DeleteUser = async (req, res) => {
   }
 };
 
-// Tìm kiếm người dùng theo tuổi
 const GetByAge = async (req, res) => {
   try {
     const age = parseInt(req.params.age);
@@ -108,7 +102,6 @@ const GetByAge = async (req, res) => {
   }
 };
 
-// Tìm kiếm người dùng theo năm sinh
 const GetByYearOfBirth = async (req, res) => {
   try {
     const year = parseInt(req.params.year);
